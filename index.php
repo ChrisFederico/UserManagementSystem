@@ -1,20 +1,15 @@
-<?php include 'functions.php'; ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<!--    <h2>--><?//=generateRandomEmail(generateRandomName())?><!--</h2>-->
-    <?php
-        $randomName = generateRandomName();
-        $randomEmail = generateRandomEmail($randomName);
-        $randomCode = generateCode();
+<!doctype html>
+<html lang="en" class="h-100">
+    <head>
+        <title>Chris Federico · User Management System</title>
+        <?php require_once 'resources/views/head.php'; ?>
+    </head>
 
-        echo "<h1>$randomName</h1>" .
-            "<h2>$randomEmail</h2>" .
-            "<p>$randomCode</p>";
-    ?>
-</body>
+    <body class="d-flex flex-column h-100">
+        <?php
+            require_once 'resources/views/header.html';
+            require_once 'resources/views/main_content.php';
+            require_once 'resources/views/footer.php';
+        ?>
+    </body>
 </html>

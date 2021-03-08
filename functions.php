@@ -28,6 +28,9 @@ function generateRandomEmail(string $name) : string {
     return strtolower("$username$randomNumber@$domain");
 }
 
+/**
+ * @return string
+ */
 function generateCode() : string {
     $code = "";
 
@@ -61,4 +64,36 @@ function generateCode() : string {
     $code .= chr(mt_rand(65, 90));
 
     return strtoupper($code);
+}
+
+/**
+ * @return int
+ */
+function generateAge() : int {
+    return mt_rand(15, 40);
+}
+
+/**
+ * @param int $howMany
+ * @param mysqli $conn
+ */
+function insertUsers(int $howMany, mysqli $conn) {
+    while($howMany > 0) {
+        $username = generateRandomName();
+        $email = generateRandomEmail($username);
+        $password = hash('sha256', $username);
+        $code = generateCode();
+        $age = generateAge();
+
+        $sql = "INSERT INTO `users` (username, email, password, code, age) VALUES ('$username', '$email', '$password', '$code', '$age')";
+        $res = $conn->query($sql);
+
+        if(!$res) {
+            echo "<pre>"; print_r($sql);
+            die("Error on query: {$conn->error}");
+        } else {
+            echo "created user $username, email $email, code $code, age $age<br>";
+            $howMany--;
+        }
+    }
 }
