@@ -2,6 +2,29 @@
     <div class="container">
         <div class="mb-5">&nbsp;</div>
         <h1 class="mt-5">User Management System</h1>
-        <p class="lead">Pin a footer to the bottom of the viewport in desktop browsers with this custom HTML and CSS. A fixed navbar has been added with <code class="small">padding-top: 60px;</code> on the <code class="small">main &gt; .container</code>.</p>
+        <div class="mt-5">
+            <?php
+                switch(getParam('action')) {
+                    case 'insert':
+                        include 'pages/insertUser.php'; break;
+
+                    default:
+                        $orderBy = getParam('orderBy', 'id');
+                        $orderDir = getParam('orderDir', 'DESC');
+                        $limit = getParam('recordsPerPage', 10);
+                        $searchUser = getParam('searchUser', '');
+
+                        $params = array(
+                            'orderBy' => $orderBy,
+                            'orderDir' => $orderDir,
+                            'searchUser' => $searchUser
+                        );
+
+                        $users = selectUsers($conn, $params, $limit);
+
+                        include 'pages/usersList.php';
+                }
+            ?>
+        </div>
     </div>
 </main>

@@ -39,28 +39,28 @@ function generateCode() : string {
         $code .= chr(mt_rand(65, 90));
     }
 
-    // 00
+    // 01
     for($i = 0; $i < 2; $i++) {
         $code .= chr(mt_rand(48, 57));
     }
 
-    // A
+    // G
     $code .= chr(mt_rand(65, 90));
 
-    // 00
+    // 23
     for($i = 0; $i < 2; $i++) {
         $code .= chr(mt_rand(48, 57));
     }
 
-    // A
+    // H
     $code .= chr(mt_rand(65, 90));
 
-    // 000
+    // 456
     for($i = 0; $i < 3; $i++) {
         $code .= chr(mt_rand(48, 57));
     }
 
-    // A
+    // I
     $code .= chr(mt_rand(65, 90));
 
     return strtoupper($code);
@@ -89,11 +89,53 @@ function insertUsers(int $howMany, mysqli $conn) {
         $res = $conn->query($sql);
 
         if(!$res) {
-            echo "<pre>"; print_r($sql);
             die("Error on query: {$conn->error}");
         } else {
-            echo "created user $username, email $email, code $code, age $age<br>";
             $howMany--;
         }
     }
+}
+
+/**
+ * @param mysqli $conn
+ * @param array $params
+ * @param int $limit
+ * @return array
+ */
+function selectUsers(mysqli $conn, array $params = [], int $limit = 10) : array {
+    $records = [];
+
+    $orderBy = array_key_exists('orderBy', $params)? $params['orderBy'] : 'id';
+    $orderDir = array_key_exists('orderDir', $params)? $params['orderDir'] : 'ASC';
+    $searchUser = array_key_exists('searchUser', $params)? $params['searchUser'] : '';
+    $limit = (int) $limit;
+
+    $where = '';
+    if($searchUser != '') {
+        $search = $params['searchUser'];
+        $search = $conn->escape_string($search);
+        $where = "WHERE username LIKE '%{$search}%'
+            OR email LIKE '%{$search}%'
+            OR code LIKE '%{$search}%'";
+    }
+
+    $sql = "SELECT * FROM `users` {$where} ORDER BY {$orderBy} {$orderDir} LIMIT {$limit}";
+    echo $sql;
+
+    $result = $conn->query($sql) or die($conn->error);
+
+    while($row = $result->fetch_assoc()) {
+        $records[] = $row;
+    }
+
+    return $records;
+}
+
+/**
+ * @param string $param
+ * @param string $default
+ * @return string
+ */
+function getParam(string $param, $default='') : string {
+    return !empty($_REQUEST[$param])? $_REQUEST[$param] : $default;
 }
